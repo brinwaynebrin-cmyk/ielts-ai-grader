@@ -1,1 +1,93 @@
-
+{
+  "metadata": {
+    "band": "7.0-7.5",
+    "total": 3680,
+    "version": "2024.1",
+    "description": "雅思7分必备核心词汇"
+  },
+  "words": [
+    {
+      "id": "b7_0001",
+      "word": "ambiguous",
+      "phonetic": "/æmˈbɪɡjuəs/",
+      "pos": "adj",
+      "meaning": "模棱两可的，含糊不清的",
+      "en_meaning": "having more than one possible meaning",
+      "examples": [
+        "The instructions were ambiguous and confusing.",
+        "His role in the project remains ambiguous."
+      ],
+      "collocations": ["ambiguous answer", "morally ambiguous", "deliberately ambiguous"],
+      "synonyms": ["vague", "unclear", "equivocal"],
+      "topics": ["communication", "academic"],
+      "frequency": 85,
+      "difficulty": 7.5
+    },
+    {
+      "id": "b7_0002",
+      "word": "detrimental",
+      "phonetic": "/ˌdetrɪˈmentl/",
+      "pos": "adj",
+      "meaning": "有害的，不利的",
+      "en_meaning": "causing harm or damage",
+      "examples": [
+        "Smoking is detrimental to health.",
+        "The policy could be detrimental to small businesses."
+      ],
+      "collocations": ["detrimental to health", "detrimental effect", "highly detrimental"],
+      "synonyms": ["harmful", "damaging", "destructive"],
+      "topics": ["health", "environment", "business"],
+      "frequency": 78,
+      "difficulty": 7.0
+    },
+    {
+      "id": "b7_0003",
+      "word": "implement",
+      "phonetic": "/ˈɪmplɪment/",
+      "pos": "v",
+      "meaning": "实施，执行",
+      "en_meaning": "to put a plan into action",
+      "examples": [
+        "The government decided to implement new policies.",
+        "We need to implement changes gradually."
+      ],
+      "collocations": ["implement changes", "implement policy", "implement plan"],
+      "word_family": {"noun": "implementation", "noun2": "implement"},
+      "topics": ["business", "government", "academic"],
+      "frequency": 92,
+      "difficulty": 7.0
+    },
+    {
+      "id": "b7_0004",
+      "word": "sustainable",
+      "phonetic": "/səˈsteɪnəbl/",
+      "pos": "adj",
+      "meaning": "可持续的",
+      "en_meaning": "able to continue without damaging environment",
+      "examples": [
+        "We need to find sustainable energy sources.",
+        "Sustainable development is crucial."
+      ],
+      "collocations": ["sustainable development", "sustainable energy", "environmentally sustainable"],
+      "topics": ["environment", "business"],
+      "frequency": 88,
+      "difficulty": 7.0
+    },
+    {
+      "id": "b7_0005",
+      "word": "perspective",
+      "phonetic": "/pəˈspektɪv/",
+      "pos": "n",
+      "meaning": "观点，视角",
+      "en_meaning": "a particular way of viewing something",
+      "examples": [
+        "From my perspective, this is the best solution.",
+        "The book offers a fresh perspective."
+      ],
+      "collocations": ["from my perspective", "global perspective", "unique perspective"],
+      "topics": ["academic", "communication"],
+      "frequency": 90,
+      "difficulty": 6.5
+    }
+  ]
+}
