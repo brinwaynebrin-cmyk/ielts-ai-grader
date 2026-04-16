@@ -13,7 +13,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "api/grade_writing.py"
+      "dest": "/web/index.html"
     }
   ]
 }
