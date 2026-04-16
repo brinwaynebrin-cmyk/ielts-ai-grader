@@ -3,7 +3,7 @@
     "band": "7.0-7.5",
     "total": 3680,
     "version": "2024.1",
-    "description": "雅思7分必备核心词汇"
+    "description": "雅思7分核心学术词汇"
   },
   "words": [
     {
@@ -13,10 +13,7 @@
       "pos": "adj",
       "meaning": "模棱两可的，含糊不清的",
       "en_meaning": "having more than one possible meaning",
-      "examples": [
-        "The instructions were ambiguous and confusing.",
-        "His role in the project remains ambiguous."
-      ],
+      "examples": ["The instructions were ambiguous and confusing.", "His role remains ambiguous."],
       "collocations": ["ambiguous answer", "morally ambiguous", "deliberately ambiguous"],
       "synonyms": ["vague", "unclear", "equivocal"],
       "topics": ["communication", "academic"],
@@ -30,13 +27,10 @@
       "pos": "adj",
       "meaning": "有害的，不利的",
       "en_meaning": "causing harm or damage",
-      "examples": [
-        "Smoking is detrimental to health.",
-        "The policy could be detrimental to small businesses."
-      ],
+      "examples": ["Smoking is detrimental to health.", "The policy could be detrimental to business."],
       "collocations": ["detrimental to health", "detrimental effect", "highly detrimental"],
       "synonyms": ["harmful", "damaging", "destructive"],
-      "topics": ["health", "environment", "business"],
+      "topics": ["health", "environment"],
       "frequency": 78,
       "difficulty": 7.0
     },
@@ -47,13 +41,10 @@
       "pos": "v",
       "meaning": "实施，执行",
       "en_meaning": "to put a plan into action",
-      "examples": [
-        "The government decided to implement new policies.",
-        "We need to implement changes gradually."
-      ],
+      "examples": ["The government decided to implement new policies.", "We need to implement changes gradually."],
       "collocations": ["implement changes", "implement policy", "implement plan"],
-      "word_family": {"noun": "implementation", "noun2": "implement"},
-      "topics": ["business", "government", "academic"],
+      "word_family": {"noun": "implementation"},
+      "topics": ["business", "government"],
       "frequency": 92,
       "difficulty": 7.0
     },
@@ -64,10 +55,7 @@
       "pos": "adj",
       "meaning": "可持续的",
       "en_meaning": "able to continue without damaging environment",
-      "examples": [
-        "We need to find sustainable energy sources.",
-        "Sustainable development is crucial."
-      ],
+      "examples": ["We need sustainable energy sources.", "Sustainable development is crucial."],
       "collocations": ["sustainable development", "sustainable energy", "environmentally sustainable"],
       "topics": ["environment", "business"],
       "frequency": 88,
@@ -80,14 +68,77 @@
       "pos": "n",
       "meaning": "观点，视角",
       "en_meaning": "a particular way of viewing something",
-      "examples": [
-        "From my perspective, this is the best solution.",
-        "The book offers a fresh perspective."
-      ],
+      "examples": ["From my perspective, this is the best solution.", "The book offers a fresh perspective."],
       "collocations": ["from my perspective", "global perspective", "unique perspective"],
       "topics": ["academic", "communication"],
       "frequency": 90,
       "difficulty": 6.5
+    },
+    {
+      "id": "b7_0006",
+      "word": "inevitable",
+      "phonetic": "/ɪnˈevɪtəbl/",
+      "pos": "adj",
+      "meaning": "不可避免的",
+      "en_meaning": "unavoidable, certain to happen",
+      "examples": ["Change is inevitable in any organization.", "The defeat seemed inevitable."],
+      "collocations": ["seem inevitable", "virtually inevitable", "inevitable consequence"],
+      "topics": ["general", "business"],
+      "frequency": 82,
+      "difficulty": 7.5
+    },
+    {
+      "id": "b7_0007",
+      "word": "consequence",
+      "phonetic": "/ˈkɒnsɪkwəns/",
+      "pos": "n",
+      "meaning": "结果，后果",
+      "en_meaning": "result or effect of an action",
+      "examples": ["Climate change may have serious consequences.", "You must face the consequences."],
+      "collocations": ["serious consequences", "face consequences", "as a consequence"],
+      "synonyms": ["result", "outcome", "effect"],
+      "topics": ["general", "academic"],
+      "frequency": 95,
+      "difficulty": 6.5
+    },
+    {
+      "id": "b7_0008",
+      "word": "controversial",
+      "phonetic": "/ˌkɒntrəˈvɜːʃl/",
+      "pos": "adj",
+      "meaning": "有争议的",
+      "en_meaning": "causing disagreement or discussion",
+      "examples": ["Genetic engineering is controversial.", "The decision was highly controversial."],
+      "collocations": ["highly controversial", "controversial issue", "controversial decision"],
+      "topics": ["technology", "society"],
+      "frequency": 80,
+      "difficulty": 7.5
+    },
+    {
+      "id": "b7_0009",
+      "word": "hypothesis",
+      "phonetic": "/haɪˈpɒθəsɪs/",
+      "pos": "n",
+      "meaning": "假设，假说",
+      "en_meaning": "an idea that can be tested",
+      "examples": ["The hypothesis was proven wrong.", "We need to test this hypothesis."],
+      "collocations": ["test hypothesis", "prove hypothesis", "working hypothesis"],
+      "topics": ["academic", "science"],
+      "frequency": 75,
+      "difficulty": 8.0
+    },
+    {
+      "id": "b7_0010",
+      "word": "pragmatic",
+      "phonetic": "/præɡˈmætɪk/",
+      "pos": "adj",
+      "meaning": "务实的，实用的",
+      "en_meaning": "dealing with problems in a practical way",
+      "examples": ["We need a pragmatic approach.", "He is very pragmatic about business."],
+      "collocations": ["pragmatic approach", "pragmatic solution", "pragmatic attitude"],
+      "topics": ["business", "general"],
+      "frequency": 70,
+      "difficulty": 7.5
     }
   ]
 }
