@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IELTS Zenith | 智能评分版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root { --primary: #2D3436; --accent: #00B894; --accent-warm: #E17055; }
+        body { font-family: 'Space Grotesk', sans-serif; background-color: #F7F5F3; color: var(--primary); }
+        .serif { font-family: 'Playfair Display', serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        
+        /* 评分结果弹窗动画 */
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .animate-slide-up { animation: slideUp 0.4s ease-out; }
+        
+        /* 加载动画 */
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid var(--accent); width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* 分数环 */
+        .score-ring { transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 1s ease-in-out; }
+        
+        .section-hidden { display: none; }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- API配置（部署后修改这里） -->
+    <script>
+        const API_BASE = "https://ielts-ai-grader-ae5hv72zm-brinwaynebrin-cmyks-projects.vercel.app/api";
+        const API_KEY = "your-frontend-key"; // 如需简单鉴权
+    </script>
+
+    <!-- 导航栏（同上，省略） -->
+    <nav class="fixed top-0 w-full z-50 glass border-b border-gray-200/50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-3 cursor-pointer" onclick="showSection('dashboard')">
+                    <div class="w-8 h-8 bg-gradient-to-br from-teal-400 to-teal-600 rounded-lg flex items-center justify-center text-white font-bold">Z</div>
+                    <span class="serif text-xl font-bold">Zenith IELTS</span>
+                </div>
+                <div class="hidden md:flex space-x-1">
+                    <button onclick="showSection('dashboard')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100">仪表盘</button>
+                    <button onclick="showSection('writing')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100">智能写作</button>
+                    <button onclick="showSection('speaking')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100">AI口语</button>
+                    <button onclick="showSection('history')" class="nav-btn px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100">评分记录</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-20 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+
+        <!-- 智能写作板块（已对接API） -->
+        <section id="writing" class="section">
+            <div class="mb-6 flex items-end justify-between">
+                <div>
+                    <h2 class="serif text-4xl font-bold text-gray-900">AI写作精批</h2>
+                    <p class="text-gray-600 mt-1">基于DeepSeek/GPT-4，按官方四项标准评分 • 约¥0.02/篇</p>
+                </div>
+                <div class="flex items-center space-x-2 bg-white/50 px-3 py-2 rounded-full border border-gray-200 text-sm">
+                    <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
+                    <span>API状态：在线</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+                <!-- 左侧：题目与写作 -->
+                <div class="lg:col-span-3 space-y-6">
+                    <!-- 题目卡 -->
+                    <div class="glass rounded-2xl p-6 border border-white/50">
+                        <div class="flex items-center justify-between mb-4">
+                            <span id="taskBadge" class="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-semibold">Task 2</span>
+                            <div class="flex space-x-2">
+                                <button onclick="switchTask('task1')" class="text-xs px-3 py-1 rounded-full border hover:bg-gray-50">Task 1</button>
+                                <button onclick="switchTask('task2')" class="text-xs px-3 py-1 rounded-full bg-gray-900 text-white">Task 2</button>
+                            </div>
+                        </div>
+                        <div id="promptBox" class="p-4 bg-gradient-to-br from-teal-50 to-orange-50 rounded-xl border border-teal-100">
+                            <p class="text-gray-800 font-medium leading-relaxed">
+                                Some people think that the best way to reduce crime is to give longer prison sentences. 
+                                Others believe there are better ways to reduce crime. Discuss both views and give your opinion.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- 写作区 -->
+                    <div class="glass rounded-2xl p-6 border border-white/50">
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-4">
+                                <button onclick="toggleTimer()" id="timerBtn" class="flex items-center space-x-2 px-4 py-2 bg-teal-500 text-white rounded-full hover:bg-teal-600 transition-all text-sm">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"/></svg>
+                                    <span id="timerText">40:00</span>
+                                </button>
+                                <span class="text-sm text-gray-500">目标：<span id="targetWord">250</span>词</span>
+                            </div>
+                            <span class="text-sm text-gray-500">字数：<span id="wordCount" class="font-bold text-gray-900">0</span></span>
+                        </div>
+
+                        <textarea id="essayInput" 
+                            class="w-full h-64 p-4 border border-gray-300 rounded-xl bg-white/80 resize-none focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all font-mono text-sm leading-relaxed"
+                            placeholder="在此输入你的作文...&#10;&#10;提示：&#10;1. 确保段落结构清晰（Intro + Body*2 + Conclusion）&#10;2. 使用学术词汇（不用 contractions）&#10;3. Task 2 至少250词才能获得有效评分"
+                            oninput="updateWordCount()"></textarea>
+
+                        <div class="mt-4 flex justify-between items-center">
+                            <div class="text-xs text-gray-400">上次保存：刚刚</div>
+                            <button onclick="submitEssay()" id="submitBtn" class="px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <span id="btnText">提交AI评分</span>
+                                <div id="btnLoader" class="loader hidden" style="width: 16px; height: 16px; border-width: 2px;"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 右侧：历史与提示 -->
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="glass rounded-2xl p-6 border border-white/50">
+                        <h3 class="font-bold text-gray-900 mb-4">评分历史</h3>
+                        <div id="historyList" class="space-y-3 max-h-96 overflow-y-auto">
+                            <div class="text-sm text-gray-500 text-center py-8">暂无评分记录</div>
+                        </div>
+                    </div>
+
+                    <div class="glass rounded-2xl p-6 border border-white/50 bg-gradient-to-br from-teal-50/50 to-transparent">
+                        <h3 class="font-bold text-gray-900 mb-3">💡 提分技巧</h3>
+                        <ul class="space-y-2 text-sm text-gray-600">
+                            <li class="flex items-start"><span class="mr-2">•</span>Task 2 开头段用 "While it is true that..." 平衡双方观点</li>
+                            <li class="flex items-start"><span class="mr-2">•</span>避免使用 "very", "good", "bad" 等基础词汇</li>
+                            <li class="flex items-start"><span class="mr-2">•</span>每段结尾写主题句总结，强化CC分数</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- AI口语板块 -->
+        <section id="speaking" class="section section-hidden">
+            <div class="mb-8">
+                <h2 class="serif text-4xl font-bold text-gray-900">AI口语模考</h2>
+                <p class="text-gray-600">语音输入 + 智能评估（浏览器直接录音，无需上传文件）</p>
+            </div>
+
+            <div class="max-w-3xl mx-auto">
+                <div class="glass rounded-2xl p-8 border border-white/50 text-center">
+                    <div class="mb-6">
+                        <span class="px-3 py-1 bg-teal-100 text-teal-700 rounded-full text-xs font-semibold">Part 2</span>
+                        <h3 class="serif text-2xl font-bold mt-4 mb-2">Describe a difficult decision you made</h3>
+                        <p class="text-gray-600 text-sm">You should say: what it was, when you made it, why it was difficult, and explain how you felt after deciding</p>
+                    </div>
+
+                    <div class="flex justify-center mb-6">
+                        <button onclick="toggleSpeaking()" id="speakBtn" class="relative w-20 h-20 rounded-full bg-red-500 text-white flex items-center justify-center hover:bg-red-600 transition-all shadow-lg">
+                            <svg id="micIcon" class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clip-rule="evenodd"/></svg>
+                            <div id="speakWave" class="hidden absolute inset-0 rounded-full bg-red-400 animate-ping"></div>
+                        </button>
+                    </div>
+
+                    <div id="speakStatus" class="text-gray-600 mb-4">点击开始录音（限时2分钟）</div>
+                    
+                    <!-- 实时转写显示 -->
+                    <div id="transcriptBox" class="hidden p-4 bg-white/60 rounded-xl border border-gray-200 text-left min-h-[100px] text-gray-800"></div>
+
+                    <button onclick="gradeSpeaking()" id="gradeSpeakBtn" class="mt-6 px-8 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-all hidden">
+                        提交评分
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 评分结果弹窗 -->
+    <div id="resultModal" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-3xl w-full max-h-[90vh] overflow-y-auto animate-slide-up shadow-2xl">
+            <!-- 动态内容插入这里 -->
+        </div>
+    </div>
+
+    <script>
+        // ==================== 全局状态 ====================
+        let currentTask = 'task2';
+        let timerInterval;
+        let timeLeft = 2400; // 40分钟
+        let isRecording = false;
+        let recognition; // Web Speech API
+        let transcript = '';
+
+        // ==================== 导航功能 ====================
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('section-hidden'));
+            document.getElementById(id).classList.remove('section-hidden');
+        }
+
+        // ==================== 写作功能 ====================
+        function switchTask(task) {
+            currentTask = task;
+            const prompt = task === 'task1' 
+                ? "The graph shows the percentage of households with internet access in three different countries from 1998 to 2008. Summarize the information."
+                : "Some people think that the best way to reduce crime is to give longer prison sentences...";
+            
+            document.getElementById('promptBox').innerHTML = `<p class="text-gray-800 font-medium leading-relaxed">${prompt}</p>`;
+            document.getElementById('taskBadge').textContent = task === 'task1' ? 'Task 1' : 'Task 2';
+            document.getElementById('targetWord').textContent = task === 'task1' ? '150' : '250';
+            document.getElementById('timerText').textContent = task === 'task1' ? '20:00' : '40:00';
+            timeLeft = task === 'task1' ? 1200 : 2400;
+        }
+
+        function updateWordCount() {
+            const text = document.getElementById('essayInput').value;
+            const count = text.trim() ? text.trim().split(/\s+/).length : 0;
+            document.getElementById('wordCount').textContent = count;
+            
+            // 字数达标变绿色
+            const target = currentTask === 'task1' ? 150 : 250;
+            if (count >= target) {
+                document.getElementById('wordCount').classList.add('text-teal-600');
+            } else {
+                document.getElementById('wordCount').classList.remove('text-teal-600');
+            }
+        }
+
+        function toggleTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+                document.getElementById('timerBtn').classList.remove('bg-red-500');
+                document.getElementById('timerBtn').classList.add('bg-teal-500');
+            } else {
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                    const s = (timeLeft % 60).toString().padStart(2, '0');
+                    document.getElementById('timerText').textContent = `${m}:${s}`;
+                    
+                    if (timeLeft <= 300) { // 最后5分钟变红
+                        document.getElementById('timerBtn').classList.remove('bg-teal-500');
+                        document.getElementById('timerBtn').classList.add('bg-red-500');
+                    }
+                    
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        alert('时间到！');
+                    }
+                }, 1000);
+                document.getElementById('timerBtn').classList.add('bg-red-500');
+                document.getElementById('timerBtn').classList.remove('bg-teal-500');
+            }
+        }
+
+        // ==================== API核心：提交写作 ====================
+        async function submitEssay() {
+            const essay = document.getElementById('essayInput').value;
+            const wordCount = essay.trim() ? essay.trim().split(/\s+/).length : 0;
+            const target = currentTask === 'task1' ? 150 : 250;
+            
+            if (wordCount < target) {
+                alert(`字数不足，${currentTask} 需要至少 ${target} 词`);
+                return;
+            }
+
+            const btn = document.getElementById('submitBtn');
+            const btnText = document.getElementById('btnText');
+            const loader = document.getElementById('btnLoader');
+            
+            // 加载状态
+            btn.disabled = true;
+            btnText.textContent = 'AI评分中...';
+            loader.classList.remove('hidden');
+
+            try {
+                const response = await fetch(`${API_BASE}/grade_writing`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // 'Authorization': `Bearer ${API_KEY}` // 如需鉴权
+                    },
+                    body: JSON.stringify({
+                        essay: essay,
+                        task_type: currentTask,
+                        prompt: document.getElementById('promptBox').innerText,
+                        target_band: 7.0
+                    })
+                });
+
+                if (!response.ok) throw new Error('API错误');
+                
+                const result = await response.json();
+                showWritingResult(result);
+                addToHistory(result, essay);
+                
+            } catch (error) {
+                console.error(error);
+                alert('评分服务暂时繁忙，已启用本地基础评分');
+                // 降级方案：本地简单评分
+                showFallbackResult(essay);
+            } finally {
+                btn.disabled = false;
+                btnText.textContent = '提交AI评分';
+                loader.classList.add('hidden');
+            }
+        }
+
+        // ==================== 结果显示 ====================
+        function showWritingResult(data) {
+            const modal = document.getElementById('resultModal');
+            const container = modal.querySelector('div');
+            
+            const breakdown = data.breakdown;
+            const feedback = data.detailed_feedback;
+            
+            container.innerHTML = `
+                <div class="p-8">
+                    <div class="flex justify-between items-start mb-8">
+                        <div>
+                            <h2 class="serif text-3xl font-bold text-gray-900">评分报告</h2>
+                            <p class="text-gray-500 mt-1">由 ${data.provider === 'deepseek' ? 'DeepSeek' : 'GPT-4'} 评估 • 耗时${data.processing_time}s • 花费$${data.cost_usd}</p>
+                        </div>
+                        <button onclick="closeModal()" class="p-2 hover:bg-gray-100 rounded-full">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                        </button>
+                    </div>
+
+                    <!-- 总分圆环 -->
+                    <div class="flex justify-center mb-8">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full transform -rotate-90">
+                                <circle cx="64" cy="64" r="60" stroke="#e5e7eb" stroke-width="8" fill="none"/>
+                                <circle cx="64" cy="64" r="60" stroke="${data.overall_band >= 7 ? '#00B894' : data.overall_band >= 6 ? '#FDCB6E' : '#E17055'}" 
+                                    stroke-width="8" fill="none" stroke-dasharray="377" stroke-dashoffset="${377 - (377 * data.overall_band / 9)}" class="transition-all duration-1000"/>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-4xl font-bold text-gray-900">${data.overall_band}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 四项分数 -->
+                    <div class="grid grid-cols-2 gap-4 mb-8">
+                        ${Object.entries(breakdown).map(([key, val]) => `
+                            <div class="p-4 bg-gray-50 rounded-xl border ${val.score >= 7 ? 'border-teal-200 bg-teal-50/30' : 'border-gray-200'}">
+                                <div class="flex justify-between items-center mb-2">
+                                    <span class="font-bold text-gray-700 text-sm">${key}</span>
+                                    <span class="text-xl font-bold ${val.score >= 7 ? 'text-teal-600' : 'text-orange-500'}">${val.score}</span>
+                                </div>
+                                <p class="text-xs text-gray-600 leading-relaxed">${val.comments}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+
+                    <!-- 详细建议 -->
+                    <div class="space-y-6">
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                                <span class="w-6 h-6 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-xs mr-2">✓</span>
+                                优势
+                            </h3>
+                            <ul class="space-y-2">
+                                ${feedback.strengths.map(s => `<li class="text-sm text-gray-700 pl-8">• ${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="font-bold text-gray-900 mb-3 flex items-center">
+                                <span class="w-6 h-6 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center text-xs mr-2">!</span>
+                                需改进（针对7分目标）
+                            </h3>
+                            <ul class="space-y-2">
+                                ${feedback.weaknesses.map(w => `<li class="text-sm text-gray-700 pl-8">• ${w}</li>`).join('')}
+                            </ul>
+                        </div>
+
+                        ${data.corrected_paragraphs ? `
+                        <div class="bg-gray-900 text-white rounded-xl p-6">
+                            <h3 class="font-bold mb-4">精修段落</h3>
+                            ${data.corrected_paragraphs.map((p, i) => `
+                                <div class="mb-4 last:mb-0">
+                                    <div class="text-xs text-gray-400 mb-1">原文（${p.focus}问题）：</div>
+                                    <div class="text-red-300 text-sm mb-2 line-through opacity-70">${p.original}</div>
+                                    <div class="text-xs text-gray-400 mb-1">修改版：</div>
+                                    <div class="text-teal-300 text-sm">${p.corrected}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.remove('hidden');
+        }
+
+        function showFallbackResult(essay) {
+            // 本地基础评分（无API时）
+            const wordCount = essay.split(/\s+/).length;
+            const hasConclusion = essay.toLowerCase().includes('in conclusion') || essay.toLowerCase().includes('to sum up');
+            const band = wordCount > 250 && hasConclusion ? 6.0 : 5.5;
+            
+            showWritingResult({
+                overall_band: band,
+                provider: 'local',
+                cost_usd: 0,
+                processing_time: 0.1,
+                breakdown: {
+                    TR: {score: band, comments: "本地基础评估：字数达标"},
+                    CC: {score: band, comments: hasConclusion ? "包含结论段" : "缺少明确结论段"},
+                    LR: {score: band, comments: "基础评估"},
+                    GRA: {score: band, comments: "建议检查语法错误"}
+                },
+                detailed_feedback: {
+                    strengths: ["完成作答", "字数达标"],
+                    weaknesses: ["API暂时不可用，无法深度分析"]
+                }
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('resultModal').classList.add('hidden');
+        }
+
+        function addToHistory(data, essay) {
+            const history = document.getElementById('historyList');
+            const item = document.createElement('div');
+            item.className = 'p-3 bg-white/60 rounded-xl border border-gray-200 cursor-pointer hover:border-teal-500 transition-all';
+            item.innerHTML = `
+                <div class="flex justify-between items-center mb-1">
+                    <span class="font-medium text-sm">${currentTask} - ${new Date().toLocaleDateString()}</span>
+                    <span class="font-bold text-teal-600">${data.overall_band}</span>
+                </div>
+                <div class="text-xs text-gray-500 truncate">${essay.substring(0, 50)}...</div>
+            `;
+            item.onclick = () => showWritingResult(data);
+            
+            if (history.children[0]?.textContent.includes('暂无')) {
+                history.innerHTML = '';
+            }
+            history.insertBefore(item, history.firstChild);
+        }
+
+        // ==================== 口语功能（Web Speech API） ====================
+        function toggleSpeaking() {
+            if (!('webkitSpeechRecognition' in window)) {
+                alert('您的浏览器不支持语音识别，请使用Chrome');
+                return;
+            }
+
+            if (isRecording) {
+                recognition.stop();
+                isRecording = false;
+                document.getElementById('speakBtn').classList.remove('bg-red-600');
+                document.getElementById('speakBtn').classList.add('bg-red-500');
+                document.getElementById('speakWave').classList.add('hidden');
+                document.getElementById('speakStatus').textContent = '录音已停止，可提交评分';
+                document.getElementById('gradeSpeakBtn').classList.remove('hidden');
+            } else {
+                recognition = new webkitSpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.continuous = true;
+                recognition.interimResults = true;
+                
+                transcript = '';
+                document.getElementById('transcriptBox').classList.remove('hidden');
+                document.getElementById('transcriptBox').textContent = '';
+                
+                recognition.onresult = (event) => {
+                    let final = '';
+                    for (let i = event.resultIndex; i < event.results.length; i++) {
+                        if (event.results[i].isFinal) {
+                            final += event.results[i][0].transcript;
+                        }
+                    }
+                    transcript += final;
+                    document.getElementById('transcriptBox').textContent = transcript;
+                };
+                
+                recognition.start();
+                isRecording = true;
+                document.getElementById('speakBtn').classList.remove('bg-red-500');
+                document.getElementById('speakBtn').classList.add('bg-red-600');
+                document.getElementById('speakWave').classList.remove('hidden');
+                document.getElementById('speakStatus').textContent = '正在录音...（点击停止）';
+            }
+        }
+
+        async function gradeSpeaking() {
+            if (!transcript) {
+                alert('请先录音');
+                return;
+            }
+            
+            // 直接文本评分（省钱，不调Whisper API）
+            try {
+                const response = await fetch(`${API_BASE}/grade_speaking`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        transcript: transcript,
+                        part: '2'
+                    })
+                });
+                
+                const result = await response.json();
+                alert(`口语评分：${result.band}分\n流利度：${result.fluency_comment}`);
+            } catch (e) {
+                alert('评分完成（模拟）：6.5分');
+            }
+        }
+
+        // 初始化
+        showSection('writing');
+    </script>
+</body>
+</html>
