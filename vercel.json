@@ -2,25 +2,18 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.py",
+      "src": "api/**/*.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "api/index.py"
-    },
-    {
-      "src": "/data/(.*)",
-      "dest": "/data/$1"
+      "dest": "/api/$1"
     },
     {
       "src": "/(.*)",
-      "dest": "api/index.py"
+      "dest": "/web/index.html"
     }
-  ],
-  "includeFiles": [
-    "data/**/*.json"
   ]
 }
