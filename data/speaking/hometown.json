@@ -4,47 +4,48 @@
   "title_en": "Hometown & Accommodation",
   "icon": "🏠",
   "parts": ["Part 1", "Part 2"],
-  "difficulty": "6.0-7.5",
-  "keywords": ["hometown", "accommodation", "neighborhood", "city", "village"],
+  "keywords": ["hometown", "accommodation", "city", "village", "neighborhood"],
   
   "vocabulary_bank": [
     {
       "word": "hometown",
-      "band": 6.0,
+      "phonetic": "/ˈhəʊmtaʊn/",
+      "meaning": "家乡",
       "contexts": [
         {
           "part": "Part 1",
           "question": "Tell me about your hometown.",
           "answers": {
             "band6": "My hometown is a small city. It's nice.",
-            "band7": "I come from a picturesque town in the south. It's known for its beautiful scenery.",
+            "band7": "I come from a picturesque town in the south. It's known for beautiful scenery.",
             "band8": "I hail from a quaint provincial town nestled in the mountains, renowned for its rich cultural heritage."
           },
-          "key_points": ["地理位置", "人口规模", "特色", "个人情感"],
-          "follow_ups": [
+          "tips": "避免只说'nice'，要具体描述地理位置和特征",
+          "follow_up_questions": [
             "What do you like about your hometown?",
             "Has it changed much?",
             "Is it suitable for young people?"
-          ],
-          "tips": "不要只说'nice/beautiful'，要具体描述特征"
+          ]
         },
         {
           "part": "Part 2",
-          "cue_card": "Describe a place you visited that had a positive impact",
-          "strategy": "使用 hometown 作为素材",
+          "cue_card": "Describe a place you visited",
+          "strategy": "描述回访家乡的经历",
           "sample_monologue": "I'd like to talk about revisiting my hometown after ten years...",
           "useful_phrases": [
             "brought back childhood memories",
             "reconnected with my roots",
-            "saw the place through fresh eyes",
-            "nostalgic experience"
+            "saw the place through fresh eyes"
           ]
         }
-      ]
+      ],
+      "alternatives": ["birthplace", "native town", "where I grew up"],
+      "collocations": ["return to hometown", "hometown hero"]
     },
     {
       "word": "accommodation",
-      "band": 6.5,
+      "phonetic": "/əˌkɒməˈdeɪʃn/",
+      "meaning": "住所，住宿",
       "contexts": [
         {
           "part": "Part 1",
@@ -56,10 +57,10 @@
             },
             {
               "type": "house",
-              "response": "I reside in a detached house in the suburbs with a small garden."
+              "response": "I reside in a detached house in the suburbs with a garden."
             }
           ],
-          "follow_ups": [
+          "follow_up_questions": [
             "Do you like your current accommodation?",
             "What would your ideal accommodation be like?"
           ]
@@ -68,90 +69,40 @@
           "part": "Part 3",
           "question": "What types of accommodation are common in your country?",
           "discussion_points": [
-            "High-rise apartments in cities (limited space)",
+            "High-rise apartments in cities",
             "Traditional houses in rural areas",
-            "Government-subsidized housing",
-            "Co-living spaces for young professionals"
+            "Government-subsidized housing"
           ],
-          "advanced_vocab": [
-            "high-density housing",
-            "real estate market",
-            "property prices skyrocketing",
-            "urbanization"
-          ]
+          "advanced_vocab": ["high-density housing", "real estate market", "property prices"]
         }
       ],
-      "collocations": [
-        "temporary accommodation",
-        "student accommodation",
-        "furnished accommodation"
-      ]
-    },
-    {
-      "word": "convenient",
-      "band": 6.0,
-      "contexts": [
-        {
-          "part": "Part 1",
-          "question": "Is your hometown a convenient place to live?",
-          "sample": "Yes, it's very convenient because there are supermarkets and hospitals nearby.",
-          "upgrade": "It's incredibly convenient with amenities right at my doorstep."
-        }
-      ],
-      "word_family": {
-        "noun": "convenience",
-        "adverb": "conveniently",
-        "antonym": "inconvenient"
-      }
+      "collocations": ["temporary accommodation", "student accommodation"]
     }
   ],
   
   "dialogue_simulations": [
     {
-      "title": "Part 1 对话模拟 - 基础问答",
+      "title": "Part 1 基础问答",
       "turns": [
         {
           "speaker": "examiner",
           "text": "Do you live in a house or an apartment?"
         },
         {
-          "speaker": "candidate_basic",
+          "speaker": "candidate_band6",
           "text": "I live in an apartment.",
-          "analysis": "过于简短，缺乏细节"
+          "analysis": "过于简短"
         },
         {
-          "speaker": "candidate_good",
+          "speaker": "candidate_band7",
           "text": "I currently live in a rented apartment downtown. It's a two-bedroom flat on the 15th floor.",
-          "analysis": "提供了细节：rented, location, rooms, floor"
+          "analysis": "提供细节：rented, location, rooms, floor"
         },
         {
-          "speaker": "candidate_advanced",
-          "text": "I reside in a compact yet cozy apartment in the heart of the city. While space is somewhat limited, the convenience more than makes up for it.",
-          "analysis": "使用高级词汇：reside, compact, amenities, makes up for"
+          "speaker": "candidate_band8",
+          "text": "I reside in a compact yet cozy apartment in the heart of the city. While space is limited, the convenience more than makes up for it.",
+          "analysis": "高级词汇：reside, compact, makes up for"
         }
-      ]
-    }
-  ],
-  
-  "practice_tasks": [
-    {
-      "type": "sentence_transformation",
-      "instruction": "将简单回答升级为高分表达",
-      "items": [
-        {
-          "original": "My hometown is small and quiet.",
-          "band7": "My hometown is a quaint, close-knit community.",
-          "band8": "I was born and raised in a quaint provincial town that boasts a rich cultural heritage and a refreshingly slow pace of life."
-        }
-      ]
-    },
-    {
-      "type": "vocabulary_substitution",
-      "instruction": "用更高级的词汇替换",
-      "items": [
-        {"basic": "good", "advanced": "favorable/ideal/desirable"},
-        {"basic": "big", "advanced": "spacious/vast/substantial"},
-        {"basic": "nice", "advanced": "picturesque/charming/pleasant"}
       ]
     }
   ]
