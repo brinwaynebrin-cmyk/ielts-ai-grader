@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/**/*.py",
+      "src": "api/grade_writing.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "/api/$1"
+      "dest": "api/grade_writing.py"
     },
     {
       "src": "/(.*)",
