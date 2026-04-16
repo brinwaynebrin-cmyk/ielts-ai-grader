@@ -1,1 +1,17 @@
-
+{
+  "topic": "education",
+  "topic_cn": "教育",
+  "total": 150,
+  "words": [
+    {"word": "curriculum", "meaning": "课程", "band": 7.0, "usage": "school curriculum"},
+    {"word": "pedagogy", "meaning": "教学法", "band": 8.0, "usage": "modern pedagogy"},
+    {"word": "assessment", "meaning": "评估", "band": 6.5, "usage": "student assessment"},
+    {"word": "scholarship", "meaning": "奖学金", "band": 6.5, "usage": "win a scholarship"},
+    {"word": "tuition", "meaning": "学费", "band": 6.5, "usage": "tuition fees"},
+    {"word": "discipline", "meaning": "学科；纪律", "band": 7.0, "usage": "academic discipline"},
+    {"word": "semester", "meaning": "学期", "band": 6.0, "usage": "fall semester"},
+    {"word": "extracurricular", "meaning": "课外的", "band": 7.5, "usage": "extracurricular activities"},
+    {"word": "literacy", "meaning": "读写能力", "band": 7.0, "usage": "digital literacy"},
+    {"word": "mentor", "meaning": "导师", "band": 7.0, "usage": "academic mentor"}
+  ]
+}
